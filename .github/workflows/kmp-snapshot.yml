@@ -30,7 +30,7 @@ jobs:
       - uses: ch4rl3x/maven-central-publish-pipeline/.github/actions/prepare@v1
 
       - name: Build library
-        run: ./gradlew assembleRelease
+        run: ./gradlew assemble
 
       - name: Build sample apps
         if: inputs.sample-tasks != ''
