@@ -1,0 +1,23 @@
+name: Prepare
+description: Prepare
+
+runs:
+  using: "composite"
+  steps:
+    - uses: gradle/actions/wrapper-validation@v4
+
+    - name: set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      shell: bash
+      run: chmod +x gradlew
+
+    - name: show Xcode version
+      if: runner.os == 'macOS'
+      shell: bash
+      run: xcodebuild -version
