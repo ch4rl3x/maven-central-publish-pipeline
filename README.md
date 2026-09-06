@@ -60,7 +60,7 @@ Everything else is hardcoded: JDK 17, `assembleRelease` (KMP) / `assemble`
 `main`.
 
 Tests run as steps inside the `build` job, not as a job of their own. A separate
-job would not gate the snapshot publish — `deploy-snapshot` waits on `build` —
+job would not gate the snapshot publish — `publish` waits on `build` —
 and it would repeat checkout and Gradle setup on a second runner.
 
 ## Versioning

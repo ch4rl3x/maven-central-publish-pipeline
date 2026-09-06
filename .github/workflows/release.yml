@@ -9,10 +9,10 @@ on:
         default: macos-26-intel
 
 jobs:
-  deploy-release:
+  publish:
     runs-on: ${{ inputs.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: ch4rl3x/maven-central-publish-pipeline/.github/actions/prepare@v1
 

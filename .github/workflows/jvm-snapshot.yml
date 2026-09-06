@@ -20,7 +20,7 @@ jobs:
   build:
     runs-on: ${{ inputs.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: ch4rl3x/maven-central-publish-pipeline/.github/actions/prepare@v1
 
@@ -31,9 +31,19 @@ jobs:
         if: inputs.run-tests
         run: ./gradlew check
 
+      - name: Find test results
+        id: test-results
+        if: inputs.run-tests && (success() || failure())
+        run: |
+          if find . -path '*/build/test-results/*/TEST-*.xml' -print -quit | grep -q .; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Report tests
         uses: dorny/test-reporter@v3
-        if: inputs.run-tests && (success() || failure())
+        if: steps.test-results.outputs.found == 'true' && (success() || failure())
         with:
           name: JVM Tests
           # covers plain JVM (test/) as well as Android unit tests
@@ -43,12 +53,12 @@ jobs:
           # not every repository has tests -- an empty result set is not a failure
           fail-on-empty: 'false'
 
-  deploy-snapshot:
+  publish:
     needs: [ build ]
     if: github.ref == 'refs/heads/main'
     runs-on: ${{ inputs.runner }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ github.ref }}
           fetch-tags: true
