@@ -32,12 +32,14 @@ jobs:
         run: ./gradlew check
 
       - name: Report tests
-        uses: dorny/test-reporter@v1.7.0
+        uses: dorny/test-reporter@v3
         if: inputs.run-tests && (success() || failure())
         with:
           name: JVM Tests
           path: '**/build/test-results/test/TEST-*.xml'
           reporter: java-junit
+          # not every repository has tests -- an empty result set is not a failure
+          fail-on-empty: 'false'
 
   deploy-snapshot:
     needs: [ build ]
