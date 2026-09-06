@@ -12,7 +12,7 @@ stub that does nothing but define the triggers.
 
 ## Usage
 
-Copy `examples/build.yml` and `examples/buildRelease.yml` into the consuming
+Copy `examples/snapshot.yml` and `examples/release.yml` into the consuming
 repository's `.github/workflows/`, then delete the old workflows and its
 `.github/workflows/actions/` directory. `mkver.conf` stays in the repository
 root as before.
