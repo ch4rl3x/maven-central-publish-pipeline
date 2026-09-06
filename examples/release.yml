@@ -1,3 +1,6 @@
+# -> .github/workflows/release.yml in the consuming repository
+# Shared by KMP and JVM projects. JVM projects should pass ubuntu-latest.
+
 name: Publish Release
 
 on:
@@ -7,4 +10,6 @@ on:
 jobs:
   release:
     uses: ch4rl3x/maven-central-publish-pipeline/.github/workflows/release.yml@v1
+    # with:
+    #   runner: ubuntu-latest   # for plain JVM libraries and Gradle plugins
     secrets: inherit

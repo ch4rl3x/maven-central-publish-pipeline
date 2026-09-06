@@ -10,32 +10,58 @@ The GitHub equivalent of GitLab's `include: project:` is a *reusable workflow*
 workflow is called as a complete job. That is why every repository keeps a small
 stub that does nothing but define the triggers.
 
+## Workflows
+
+Three reusable workflows. The prefix picks the project shape, the suffix says
+what it does:
+
+| Workflow | For |
+|---|---|
+| `kmp-snapshot.yml` | Kotlin Multiplatform libraries — builds, tests and publishes a SNAPSHOT from `main`. Runs on macOS because of the Apple targets. |
+| `jvm-snapshot.yml` | Plain JVM libraries and Gradle plugins — same, on `ubuntu-latest`. |
+| `release.yml` | Both. Publishes the release tag and closes the Sonatype staging repository. |
+
+There is no `kmp-release.yml` / `jvm-release.yml`: the release path does not
+depend on the project shape, only on the runner, and that is an input. Split it
+if the two ever actually diverge.
+
 ## Usage
 
-Copy `examples/snapshot.yml` and `examples/release.yml` into the consuming
-repository's `.github/workflows/`, then delete the old workflows and its
-`.github/workflows/actions/` directory. `mkver.conf` stays in the repository
-root as before.
+Copy the matching `examples/*.yml` into the consuming repository's
+`.github/workflows/` (name them whatever you like there), then delete the old
+workflows and its `.github/workflows/actions/` directory. `mkver.conf` stays in
+the repository root as before.
 
 `secrets: inherit` is required — the workflows do not declare the six secrets
 individually.
 
 ## Inputs
 
-`snapshot.yml`:
+`kmp-snapshot.yml`:
 
 | Input | Default | |
 |---|---|---|
 | `runner` | `macos-26-intel` | |
 | `sample-tasks` | *(empty)* | e.g. `:sample-app:android-app:assemble`; empty skips the step |
-| `run-tests` | `false` | test job (previously commented out) |
+| `run-tests` | `false` | runs `check` and reports the results |
 
-`release.yml`: `runner` only.
+`jvm-snapshot.yml`:
 
-Everything else is hardcoded as before: JDK 17, `assembleRelease`,
-`dokkaGeneratePublicationHtml`, `check`, git-mkver 1.3.0,
+| Input | Default | |
+|---|---|---|
+| `runner` | `ubuntu-latest` | |
+| `run-tests` | `true` | runs `check` and reports the results |
+
+`release.yml`: `runner` only — pass `ubuntu-latest` for JVM projects.
+
+Everything else is hardcoded: JDK 17, `assembleRelease` (KMP) / `assemble`
+(JVM), `dokkaGeneratePublicationHtml`, `check`, git-mkver 1.3.0,
 `publishAllPublicationsToSonatypeRepository`, `--max-workers 1`, snapshots from
 `main`.
+
+Tests run as steps inside the `build` job, not as a job of their own. A separate
+job would not gate the snapshot publish — `deploy-snapshot` waits on `build` —
+and it would repeat checkout and Gradle setup on a second runner.
 
 ## Versioning
 

@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   ci:
-    uses: ch4rl3x/maven-central-publish-pipeline/.github/workflows/snapshot.yml@v1
+    uses: ch4rl3x/maven-central-publish-pipeline/.github/workflows/kmp-snapshot.yml@v1
     with:
       sample-tasks: ':sample-app:android-app:assemble'
     secrets: inherit
