@@ -1,7 +1,7 @@
 name: JVM Snapshot
 
-# For plain JVM libraries and Gradle plugins: no Apple targets, so this runs on
-# ubuntu instead of macOS. The release path is shared with the KMP libraries --
+# For plain JVM libraries, Gradle plugins and Android libraries: no Apple targets,
+# so this runs on ubuntu instead of macOS. The release path is shared with the KMP libraries --
 # call release.yml with `runner: ubuntu-latest`.
 
 on:
@@ -36,7 +36,9 @@ jobs:
         if: inputs.run-tests && (success() || failure())
         with:
           name: JVM Tests
-          path: '**/build/test-results/test/TEST-*.xml'
+          # covers plain JVM (test/) as well as Android unit tests
+          # (testDebugUnitTest/, testReleaseUnitTest/)
+          path: '**/build/test-results/*/TEST-*.xml'
           reporter: java-junit
           # not every repository has tests -- an empty result set is not a failure
           fail-on-empty: 'false'
